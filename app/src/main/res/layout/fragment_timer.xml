@@ -8,6 +8,7 @@
 
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/createTimerBtn"
         android:layout_width="@dimen/circle_btn"
         android:layout_height="@dimen/circle_btn"
         android:scaleType="fitXY"

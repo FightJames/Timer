@@ -1,70 +1,24 @@
 package com.james.timer.view.createTimer
 
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.james.timer.R
 import com.james.timer.databinding.FragmentCreateTimerBinding
+import com.james.timer.view.utils.StringFormatter
 
 class CreateTimerFragment : Fragment() {
     lateinit var binding: FragmentCreateTimerBinding
     val createTimerViewModel: CreateTimerViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding.numberGridLayout.let { gridLayout ->
-            var currentRow = 0
-            for (i in 1..9) {
-                val view = createKeyboardNumberItem(
-                    this.layoutInflater,
-                    currentRow,
-                    (i - 1) % 3,
-                    R.layout.number_item,
-                    gridLayout
-                ) as TextView
-                view.text = i.toString()
-                gridLayout.addView(view)
-                view.setOnClickListener {
-                    createTimerViewModel.appendTime(i.toString())
-                }
-                if (i % 3 == 0) {
-                    currentRow++
-                }
-            }
-            var view = createKeyboardNumberItem(
-                this.layoutInflater,
-                currentRow,
-                0,
-                R.layout.number_item,
-                gridLayout
-            ) as TextView
-            view.text = "0"
-            gridLayout.addView(view)
-            view = createKeyboardNumberItem(
-                this.layoutInflater,
-                currentRow,
-                1,
-                R.layout.number_item,
-                gridLayout
-            ) as TextView
-            view.text = "00"
-            gridLayout.addView(view)
-            view = createKeyboardNumberItem(
-                this.layoutInflater,
-                currentRow,
-                0,
-                R.layout.back_item,
-                gridLayout
-            ) as TextView
-            gridLayout.addView(view)
-        }
-    }
 
     fun createKeyboardNumberItem(
         inflater: LayoutInflater,
@@ -83,10 +37,17 @@ class CreateTimerFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        setUpView()
         createTimerViewModel.currentTimerTimeLiveData.observe(this.viewLifecycleOwner) {
+            binding.timerText.text = StringFormatter.timerString(it, this.requireContext()).apply {
+                if (it.hours != CreateTimerViewModel.ZERO || it.minutes != CreateTimerViewModel.ZERO || it.seconds != CreateTimerViewModel.ZERO) {
+                    binding.startBtn.visibility = View.VISIBLE
+                } else {
+                    binding.startBtn.visibility = View.INVISIBLE
+                }
+            }
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,7 +58,74 @@ class CreateTimerFragment : Fragment() {
         it.root
     }
 
-    companion object {
-        fun newInstance() = CreateTimerFragment()
+    private fun setUpView() {
+        binding.numberGridLayout.let { gridLayout ->
+            var currentRow = 0
+            for (i in 1..9) {
+                val view = createKeyboardNumberItem(
+                    this.layoutInflater,
+                    currentRow,
+                    (i - 1) % 3,
+                    R.layout.number_item,
+                    gridLayout
+                )
+                view.findViewById<TextView>(R.id.numberText).let {
+                    it.text = i.toString()
+                    it.setOnClickListener {
+                        createTimerViewModel.appendTime(i.toString())
+                    }
+                }
+                gridLayout.addView(view)
+                if (i % 3 == 0) {
+                    currentRow++
+                }
+            }
+            var view = createKeyboardNumberItem(
+                this.layoutInflater,
+                currentRow,
+                0,
+                R.layout.number_item,
+                gridLayout
+            )
+            view.findViewById<TextView>(R.id.numberText).let {
+                it.text = "00"
+                it.setOnClickListener {
+                    createTimerViewModel.appendTime("00")
+                }
+            }
+            gridLayout.addView(view)
+            view = createKeyboardNumberItem(
+                this.layoutInflater,
+                currentRow,
+                1,
+                R.layout.number_item,
+                gridLayout
+            )
+            view.findViewById<TextView>(R.id.numberText).let {
+                it.text = "0"
+                it.setOnClickListener {
+                    createTimerViewModel.appendTime("0")
+                }
+            }
+            gridLayout.addView(view)
+            createKeyboardNumberItem(
+                this.layoutInflater,
+                currentRow,
+                2,
+                R.layout.back_item,
+                gridLayout
+            ).let {
+                gridLayout.addView(it)
+                it.findViewById<ImageView>(R.id.backImage).setOnClickListener {
+                    createTimerViewModel.deleteLastElementInCurrentCreateTime()
+                }
+            }
+        }
+        binding.deleteBtn.setOnClickListener {
+            this.findNavController().navigateUp()
+        }
+        binding.startBtn.setOnClickListener {
+            // todo: start timer and save timer to db
+        }
     }
 }

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.james.timer.R
 import com.james.timer.databinding.FragmentTimerBinding
 
 class TimerFragment : Fragment() {
@@ -27,6 +29,9 @@ class TimerFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        timerViewBinding.createTimerBtn.setOnClickListener {
+            this.findNavController().navigate(R.id.action_timerFragment_to_createTimerFragment)
+        }
     }
 
     companion object {
