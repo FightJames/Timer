@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".view.timer.TimerFragment">
 
+
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="@dimen/circle_btn"
         android:layout_height="@dimen/circle_btn"
