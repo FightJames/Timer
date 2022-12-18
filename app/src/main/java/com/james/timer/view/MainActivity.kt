@@ -7,7 +7,9 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import com.james.timer.R
 import com.james.timer.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     val mainViewModel: MainViewModel by viewModels()

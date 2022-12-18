@@ -15,7 +15,9 @@ import androidx.navigation.fragment.findNavController
 import com.james.timer.R
 import com.james.timer.databinding.FragmentCreateTimerBinding
 import com.james.timer.view.utils.StringFormatter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CreateTimerFragment : Fragment() {
     lateinit var binding: FragmentCreateTimerBinding
     val createTimerViewModel: CreateTimerViewModel by viewModels()
@@ -126,6 +128,9 @@ class CreateTimerFragment : Fragment() {
         }
         binding.startBtn.setOnClickListener {
             // todo: start timer and save timer to db
+            createTimerViewModel.currentTimerTimeLiveData.value?.let {
+                createTimerViewModel.saveTimer(it)
+            }
         }
     }
 }

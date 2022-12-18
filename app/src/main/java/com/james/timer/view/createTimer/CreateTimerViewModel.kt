@@ -4,8 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.james.timer.model.Time
+import com.james.timer.repository.TimerRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import timber.log.Timber
+import javax.inject.Inject
 
-class CreateTimerViewModel() : ViewModel() {
+@HiltViewModel
+class CreateTimerViewModel @Inject constructor() : ViewModel() {
+
+    @Inject
+    lateinit var timerRepository: TimerRepository
+    private val TAG = CreateTimerViewModel::class.java.simpleName
     private var curCreateTimeStr = "000000"
     val currentTimerTimeLiveData: LiveData<Time>
         get() = _currentTimerTimeLiveData
@@ -34,6 +43,10 @@ class CreateTimerViewModel() : ViewModel() {
             minutes = curCreateTimeStr.substring(2, 4),
             seconds = curCreateTimeStr.substring(4, 6),
         )
+    }
+
+    fun saveTimer(time: Time) {
+        Timber.d("$TAG repo = $timerRepository",)
     }
 
     companion object {
