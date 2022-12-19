@@ -1,0 +1,25 @@
+package com.james.timer.model
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class Timer (
+    @PrimaryKey
+    @ColumnInfo(name = "create_time", typeAffinity = 2)
+    val createTime: Long,
+
+    @ColumnInfo(name = "count_down_time", typeAffinity = 2)
+    val countDownTime: Long,
+
+    @ColumnInfo(name = "current_count_down", typeAffinity = 2)
+    val currentCountDown: Long,
+
+    @ColumnInfo(name = "state")
+    val state: TimerState,
+)
+
+enum class TimerState {
+    STOP, RUNNING, PAUSE
+}

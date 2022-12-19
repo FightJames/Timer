@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.james.timer.model.Time
+import com.james.timer.model.Timer
+import com.james.timer.model.TimerState
 import com.james.timer.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
@@ -46,7 +48,15 @@ class CreateTimerViewModel @Inject constructor() : ViewModel() {
     }
 
     fun saveTimer(time: Time) {
-        Timber.d("$TAG repo = $timerRepository",)
+        Timber.d("$TAG repo = $timerRepository")
+        timerRepository.saveTimer(
+            Timer(
+                System.currentTimeMillis(),
+                System.currentTimeMillis(),
+                System.currentTimeMillis(),
+                TimerState.STOP
+            )
+        )
     }
 
     companion object {
