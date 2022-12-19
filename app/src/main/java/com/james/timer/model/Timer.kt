@@ -3,8 +3,9 @@ package com.james.timer.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.james.timer.db.TimerDB
 
-@Entity
+@Entity(tableName = TimerDB.TIMER_TABLE_NAME)
 data class Timer (
     @PrimaryKey
     @ColumnInfo(name = "create_time", typeAffinity = 2)

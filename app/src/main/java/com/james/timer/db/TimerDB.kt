@@ -11,5 +11,10 @@ import com.james.timer.model.Timer
 @TypeConverters(TimerDBConverters::class)
 abstract class TimerDB : RoomDatabase() {
     abstract fun timerDao(): TimerDao
+
+    companion object {
+        const val NAME = "timer-database"
+        const val TIMER_TABLE_NAME = "Timer"
+    }
 }
 

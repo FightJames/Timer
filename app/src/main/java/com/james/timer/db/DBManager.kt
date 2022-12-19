@@ -11,7 +11,7 @@ class DBManager @Inject constructor(@ApplicationContext applicationContext: Cont
     private val timerDB: TimerDB by lazy {
         Room.databaseBuilder(
             applicationContext,
-            TimerDB::class.java, "timer-database"
+            TimerDB::class.java, TimerDB.NAME
         ).build()
     }
 
