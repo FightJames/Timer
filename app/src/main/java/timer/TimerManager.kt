@@ -1,5 +1,0 @@
-package timer
-
-class TimerManager {
-
-}

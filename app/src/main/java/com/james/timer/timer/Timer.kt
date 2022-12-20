@@ -1,4 +1,4 @@
-package timer
+package com.james.timer.timer
 
 import cancelChildren
 import com.james.timer.utils.JobManagerImpl

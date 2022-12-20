@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import com.james.timer.db.TimerDB
 
 @Entity(tableName = TimerDB.TIMER_TABLE_NAME)
-data class Timer (
+data class TimerData (
     @PrimaryKey
     @ColumnInfo(name = "create_time", typeAffinity = 2)
     val createTime: Long,
@@ -21,6 +21,6 @@ data class Timer (
     val state: TimerState,
 )
 
-enum class TimerState {
-    STOP, RUNNING, PAUSE
+enum class TimerState(val value: Int) {
+    STOP(0), PAUSE(1), RUNNING(2)
 }

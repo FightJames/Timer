@@ -1,13 +1,11 @@
 package com.james.timer.db
 
-import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.james.timer.model.Timer
+import com.james.timer.model.TimerData
 
-@Database(entities = [Timer::class], version = 1)
+@Database(entities = [TimerData::class], version = 1)
 @TypeConverters(TimerDBConverters::class)
 abstract class TimerDB : RoomDatabase() {
     abstract fun timerDao(): TimerDao

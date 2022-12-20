@@ -3,17 +3,17 @@ package com.james.timer.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.james.timer.model.Timer
+import com.james.timer.model.TimerData
 
 @Dao
 interface TimerDao {
 
     @Query("SELECT * FROM ${TimerDB.TIMER_TABLE_NAME}")
-    suspend fun getAll(): List<Timer>
+    suspend fun getAll(): List<TimerData>
 
     @Insert
-    suspend fun insert(timer: Timer)
+    suspend fun insert(timerData: TimerData)
 
     @Insert
-    suspend fun insertAll(vararg timer: Timer)
+    suspend fun insertAll(vararg timerData: TimerData)
 }
