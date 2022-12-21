@@ -17,6 +17,16 @@ fun Time.toMilliSecond(): Long {
     return h * 60 * 60 * 1000 + m * 60 * 1000 + s * 1000
 }
 
+fun milliSecondToTimeString(milliSecond: Long): String {
+    var _milliSecond = milliSecond
+    val h = _milliSecond / (60 * 60 * 1000)
+    _milliSecond %= (60 * 60 * 1000)
+    val m = milliSecond / (60 * 1000)
+    _milliSecond %= (60 * 1000)
+    val s = milliSecond / 1000
+    return "$h:$m:$s"
+}
+
 fun CoroutineScope.cancelChildren() {
     this.coroutineContext[Job]?.cancelChildren()
 }

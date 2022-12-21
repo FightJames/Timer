@@ -1,6 +1,5 @@
 package com.james.timer.view.createTimer
 
-import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -129,7 +128,7 @@ class CreateTimerFragment : Fragment() {
         binding.startBtn.setOnClickListener {
             // todo: start timer and save timer to db
             createTimerViewModel.currentTimerTimeLiveData.value?.let {
-                createTimerViewModel.saveTimer(it)
+                createTimerViewModel.addAndStartTimer(it)
             }
         }
     }

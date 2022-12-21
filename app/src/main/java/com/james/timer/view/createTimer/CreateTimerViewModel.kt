@@ -10,6 +10,7 @@ import com.james.timer.model.TimerState
 import com.james.timer.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import milliSecondToTimeString
 import timber.log.Timber
 import toMilliSecond
 import javax.inject.Inject
@@ -50,17 +51,12 @@ class CreateTimerViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    fun saveTimer(time: Time) {
+    fun addAndStartTimer(time: Time) {
         Timber.d("$TAG repo = $timerRepository")
         viewModelScope.launch {
-            timerRepository.saveTimer(
-                TimerData(
-                    System.currentTimeMillis(),
-                    time.toMilliSecond(),
-                    time.toMilliSecond(),
-                    TimerState.STOP
-                )
-            )
+            val timerData = TimerData(System.currentTimeMillis(), time.toMilliSecond(), time.toMilliSecond(), TimerState.STOP)
+            timerRepository.addTimerData(timerData)
+            timerRepository.start(timerData.createTime)
         }
     }
 

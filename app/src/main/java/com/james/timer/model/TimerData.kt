@@ -15,10 +15,10 @@ data class TimerData (
     val countDownTime: Long,
 
     @ColumnInfo(name = "current_count_down", typeAffinity = 2)
-    val currentCountDown: Long,
+    var currentCountDown: Long,
 
     @ColumnInfo(name = "state")
-    val state: TimerState,
+    var state: TimerState,
 )
 
 enum class TimerState(val value: Int) {

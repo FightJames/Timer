@@ -3,6 +3,7 @@ package com.james.timer.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.james.timer.model.TimerData
 
 @Dao
@@ -16,4 +17,8 @@ interface TimerDao {
 
     @Insert
     suspend fun insertAll(vararg timerData: TimerData)
+
+    @Update
+    suspend fun updateTimerData(timerData: TimerData)
+
 }

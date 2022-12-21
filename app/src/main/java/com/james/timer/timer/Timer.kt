@@ -1,55 +1,20 @@
 package com.james.timer.timer
 
-import cancelChildren
-import com.james.timer.utils.JobManagerImpl
-import io
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.james.timer.model.TimerData
 import kotlinx.coroutines.flow.StateFlow
 
-class Timer(val time: Long, private var currentTime: Long = time) {
 
-    private val _currentTimeFlow = MutableStateFlow(currentTime)
-    private val coroutineScope = JobManagerImpl(SupervisorJob() + io())
-    private var timerJob: Job = CompletableDeferred(Unit)
+interface Timer {
+
     val currentTimeFlow: StateFlow<Long>
-        get() = _currentTimeFlow
 
-    @Volatile
-    private var flag = false
-    private val delayMiliSecond = 1000L
+    val timerData: TimerData
 
-    fun start() {
-        startInternal()
-    }
+    fun start()
 
-    fun resume() {
-        startInternal()
-    }
+    fun resume()
 
-    @Synchronized
-    fun pause() {
-        flag = false
-        coroutineScope.cancelChildren()
-    }
+    fun pause()
 
-    @Synchronized
-    fun stop() {
-        flag = false
-        coroutineScope.cancelChildren()
-        currentTime = time
-    }
-
-    @Synchronized
-    private fun startInternal() {
-        if (timerJob.isActive) return
-        timerJob = coroutineScope.launchSafely {
-            flag = true
-            while (flag) {
-                delay(delayMiliSecond)
-                currentTime -= 1000
-                _currentTimeFlow.compareAndSet(_currentTimeFlow.value, currentTime)
-            }
-        }
-    }
+    fun stop()
 }
