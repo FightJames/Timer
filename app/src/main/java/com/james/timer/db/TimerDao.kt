@@ -1,6 +1,7 @@
 package com.james.timer.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -20,5 +21,8 @@ interface TimerDao {
 
     @Update
     suspend fun updateTimerData(timerData: TimerData)
+
+    @Delete
+    suspend fun deleteTimerData(timerData: TimerData)
 
 }

@@ -1,4 +1,7 @@
+import android.os.SystemClock
+import android.view.View
 import com.james.timer.model.Time
+import com.james.timer.model.TimerData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,14 +22,45 @@ fun Time.toMilliSecond(): Long {
 
 fun milliSecondToTimeString(milliSecond: Long): String {
     var _milliSecond = milliSecond
+    if (milliSecond < 0L) _milliSecond *= -1
     val h = _milliSecond / (60 * 60 * 1000)
     _milliSecond %= (60 * 60 * 1000)
-    val m = milliSecond / (60 * 1000)
+    val m = _milliSecond / (60 * 1000)
     _milliSecond %= (60 * 1000)
-    val s = milliSecond / 1000
-    return "$h:$m:$s"
+    val s = _milliSecond / 1000
+    return if (milliSecond < 0L) {
+        "-$h:$m:$s"
+    } else {
+        "$h:$m:$s"
+    }
 }
 
 fun CoroutineScope.cancelChildren() {
     this.coroutineContext[Job]?.cancelChildren()
+}
+
+val comparator = Comparator<TimerData> { p0, p1 ->
+    val stateDiff = p1.state.value - p0.state.value
+    if (stateDiff != 0) return@Comparator stateDiff
+    val countDownDiff = p0.currentCountDown - p1.currentCountDown
+    if (countDownDiff != 0L) return@Comparator if (countDownDiff > 0L) 1 else -1
+    val createTimeDiff = p0.createTime - p1.createTime
+    return@Comparator when {
+        createTimeDiff == 0L -> 0
+        createTimeDiff > 0L -> 1
+        else -> -1
+    }
+}
+
+fun View.clickWithDebounce(debounceTime: Long = 600L, action: () -> Unit) {
+    this.setOnClickListener(object : View.OnClickListener {
+        private var lastClickTime: Long = 0
+
+        override fun onClick(v: View) {
+            if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) return
+            else action()
+
+            lastClickTime = SystemClock.elapsedRealtime()
+        }
+    })
 }

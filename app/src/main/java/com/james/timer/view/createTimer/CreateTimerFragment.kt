@@ -10,11 +10,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import clickWithDebounce
 import com.james.timer.R
 import com.james.timer.databinding.FragmentCreateTimerBinding
 import com.james.timer.view.utils.StringFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CreateTimerFragment : Fragment() {
@@ -125,10 +128,12 @@ class CreateTimerFragment : Fragment() {
         binding.deleteBtn.setOnClickListener {
             this.findNavController().navigateUp()
         }
-        binding.startBtn.setOnClickListener {
-            // todo: start timer and save timer to db
-            createTimerViewModel.currentTimerTimeLiveData.value?.let {
-                createTimerViewModel.addAndStartTimer(it)
+        binding.startBtn.clickWithDebounce {
+            this.lifecycleScope.launch {
+                createTimerViewModel.currentTimerTimeLiveData.value?.let {
+                    createTimerViewModel.addAndStartTimer(it)
+                }
+                this@CreateTimerFragment.findNavController().navigateUp()
             }
         }
     }

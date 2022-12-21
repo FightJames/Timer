@@ -51,13 +51,15 @@ class CreateTimerViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    fun addAndStartTimer(time: Time) {
-        Timber.d("$TAG repo = $timerRepository")
-        viewModelScope.launch {
-            val timerData = TimerData(System.currentTimeMillis(), time.toMilliSecond(), time.toMilliSecond(), TimerState.STOP)
-            timerRepository.addTimerData(timerData)
-            timerRepository.start(timerData.createTime)
-        }
+    suspend fun addAndStartTimer(time: Time) {
+        val timerData = TimerData(
+            System.currentTimeMillis(),
+            time.toMilliSecond(),
+            time.toMilliSecond(),
+            TimerState.STOP
+        )
+        timerRepository.addTimerData(timerData)
+        timerRepository.start(timerData.createTime)
     }
 
     companion object {

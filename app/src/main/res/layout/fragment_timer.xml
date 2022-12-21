@@ -7,12 +7,22 @@
     tools:context=".view.timer.TimerFragment">
 
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/timerRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/createTimerBtn"
         android:layout_width="@dimen/circle_btn"
         android:layout_height="@dimen/circle_btn"
-        android:scaleType="fitXY"
         android:layout_marginBottom="25dp"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_baseline_add_circle_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

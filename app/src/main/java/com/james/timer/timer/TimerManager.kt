@@ -14,30 +14,16 @@ import javax.inject.Singleton
 class TimerManager {
     private val service: DBService
     private var initJob: Job = CompletableDeferred(Unit)
-//    private val _timerDataList: MutableList<TimerData> = mutableListOf()
-    val timerDataList: List<TimerData>
-        get() = map.values.toList().map { it.timerData }
+
+    private val timerDataList: MutableList<TimerData> = mutableListOf()
     private val map: MutableMap<Long, Timer> = HashMap()
-//    private val comparator = Comparator<TimerData> { p0, p1 ->
-//        val stateDiff = p1.state.value - p0.state.value
-//        if (stateDiff != 0) return@Comparator stateDiff
-//        val countDownDiff = p0.currentCountDown - p1.currentCountDown
-//        if (countDownDiff != 0L) return@Comparator if (countDownDiff > 0L) 1 else -1
-//        val createTimeDiff = p0.createTime - p1.createTime
-//        return@Comparator when {
-//            createTimeDiff == 0L -> 0
-//            createTimeDiff > 0L -> 1
-//            else -> -1
-//        }
-//    }
 
     @Inject
     constructor(service: DBService) {
         this.service = service
         initJob = jobManager.launchSafely(context = io()) {
             val timersInStorage = service.getAllTimersData()
-//            _timerDataList.addAll(timersInStorage)
-//            _timerDataList.sortWith(comparator)
+            timerDataList.addAll(timersInStorage)
             timersInStorage.forEach {
                 val timer = TimerImpl(it)
                 map[it.createTime] = timer
@@ -45,10 +31,14 @@ class TimerManager {
         }
     }
 
+    suspend fun getTimerDataList(): List<TimerData> {
+        initJob.join()
+        return timerDataList.toList()
+    }
+
     suspend fun addTimerData(timerData: TimerData) = withContext(io()) {
         initJob.join()
-//        _timerDataList.add(timerData)
-//        _timerDataList.sortWith(comparator)
+        timerDataList.add(timerData)
         val timer = TimerImpl(timerData)
         map[timerData.createTime] = timer
     }
@@ -56,7 +46,7 @@ class TimerManager {
     suspend fun deleteTimerData(timerData: TimerData) = withContext(io()) {
         initJob.join()
         map.remove(timerData.createTime)
-//        _timerDataList.remove(timerData)
+        timerDataList.remove(timerData)
     }
 
     suspend fun getTimer(createTime: Long): Timer? {

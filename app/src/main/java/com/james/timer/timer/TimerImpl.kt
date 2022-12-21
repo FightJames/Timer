@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.*
 class TimerImpl : Timer {
 
     override val timerData: TimerData
-        get() = _timerData.copy()
+        get() = _timerData
 
     private val _timerData: TimerData
     private val _currentTimeFlow: MutableStateFlow<Long>
@@ -39,11 +39,13 @@ class TimerImpl : Timer {
 
     override fun start() {
         timerState = TimerState.RUNNING
+        _timerData.state = TimerState.RUNNING
         startInternal()
     }
 
     override fun resume() {
         timerState = TimerState.RUNNING
+        _timerData.state = TimerState.RUNNING
         startInternal()
     }
 
@@ -52,6 +54,7 @@ class TimerImpl : Timer {
         flag = false
         coroutineScope.cancelChildren()
         timerState = TimerState.PAUSE
+        _timerData.state = TimerState.PAUSE
     }
 
     @Synchronized
@@ -60,6 +63,7 @@ class TimerImpl : Timer {
         coroutineScope.cancelChildren()
         _currentTimeFlow.compareAndSet(_currentTimeFlow.value, _timerData.countDownTime)
         timerState = TimerState.STOP
+        _timerData.state = TimerState.STOP
     }
 
     @Synchronized

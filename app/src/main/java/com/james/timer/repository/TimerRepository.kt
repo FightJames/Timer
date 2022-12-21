@@ -19,10 +19,9 @@ class TimerRepository @Inject constructor(
     suspend fun addTimerData(timerData: TimerData) = withContext(io()) {
         service.saveTimerData(timerData)
         timerManager.addTimerData(timerData)
-        Timber.d("all timer ${service.getAllTimersData().toString()}")
     }
 
-    suspend fun getAllTimerData(): List<TimerData> = timerManager.timerDataList
+    suspend fun getAllTimerData(): List<TimerData> = timerManager.getTimerDataList()
 
     suspend fun start(createTime: Long) {
         timerManager.getTimer(createTime)?.start()
@@ -38,6 +37,11 @@ class TimerRepository @Inject constructor(
 
     suspend fun stop(createTime: Long) {
         timerManager.getTimer(createTime)?.stop()
+    }
+
+    suspend fun removeTimer(timerData: TimerData) {
+        timerManager.deleteTimerData(timerData)
+        service.deleteTimerData(timerData)
     }
 
     suspend fun subscribeTimerCurrentTime(createTime: Long, collector: FlowCollector<Long>) =

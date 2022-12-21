@@ -12,5 +12,7 @@ class DBService @Inject constructor(val dbManager: DBManager) {
 
     suspend fun updateTimerData(timerData: TimerData) = dbManager.getTimerDAO().updateTimerData(timerData)
 
+    suspend fun deleteTimerData(timerData: TimerData) = dbManager.getTimerDAO().deleteTimerData(timerData)
+
     suspend fun getAllTimersData(): List<TimerData> = dbManager.getTimerDAO().getAll()
 }
