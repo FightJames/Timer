@@ -10,13 +10,20 @@ import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
 import com.james.timer.utils.rethrowOnCancellation
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import milliSecondToTimeString
 import timber.log.Timber
 
 class TimerViewHolder(view: View) : ViewHolder(view) {
     private var currentTimeJob: Job = CompletableDeferred(Unit)
 
-    fun onBind(timerData: TimerData, viewModel: TimerViewModel, viewLifeCycleOwner: CoroutineScope) {
+    fun onBind(
+        timerData: TimerData,
+        viewModel: TimerViewModel,
+        viewLifeCycleOwner: CoroutineScope
+    ) {
+        val timerStr = itemView.context.resources.getString(R.string.timer)
+        itemView.findViewById<TextView>(R.id.timerTitleText).text = "${milliSecondToTimeString(timerData.countDownTime)} $timerStr"
         val resetBtn = itemView.findViewById<ImageView>(R.id.resetBtn)
         resetBtn.visibility = if (timerData.state == TimerState.STOP) {
             View.GONE
@@ -50,15 +57,16 @@ class TimerViewHolder(view: View) : ViewHolder(view) {
         currentTimeJob.cancel()
         currentTimeJob = viewLifeCycleOwner.launch {
             try {
-                timeText.text = milliSecondToTimeString(viewModel.getTimerCurrentTime(timerData.createTime))
-                viewModel.subscribeTimer(timerData.createTime) {
+                timeText.text =
+                    milliSecondToTimeString(viewModel.getTimerCurrentTime(timerData.createTime))
+                viewModel.getTimerCurrentTimeFlow(timerData.createTime).collect {
                     withContext(Dispatchers.Main.immediate) {
                         timeText.text = milliSecondToTimeString(it)
                     }
                 }
             } catch (t: Throwable) {
                 t.rethrowOnCancellation()
-                Timber.d("Exception in sub $t")
+                Timber.e("Exception $t")
             }
         }
     }

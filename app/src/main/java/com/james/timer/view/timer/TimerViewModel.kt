@@ -9,6 +9,7 @@ import com.james.timer.repository.TimerRepository
 import comparator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -64,9 +65,8 @@ class TimerViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    suspend fun subscribeTimer(createTime: Long, collector: FlowCollector<Long>) {
-        timerRepository.subscribeTimerCurrentTime(createTime, collector)
-    }
+    suspend fun getTimerCurrentTimeFlow(createTime: Long) =
+        timerRepository.getTimerCurrentTimeFlow(createTime)
 
     suspend fun getTimerCurrentTime(createTime: Long): Long =
         timerRepository.getTimerCurrentTime(createTime)

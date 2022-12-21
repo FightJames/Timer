@@ -2,10 +2,9 @@ import android.os.SystemClock
 import android.view.View
 import com.james.timer.model.Time
 import com.james.timer.model.TimerData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelChildren
+import com.james.timer.utils.JobManagerImpl
+import kotlinx.coroutines.*
+import java.util.concurrent.Executors
 
 fun io() = Dispatchers.IO
 fun default() = Dispatchers.Default
@@ -23,15 +22,16 @@ fun Time.toMilliSecond(): Long {
 fun milliSecondToTimeString(milliSecond: Long): String {
     var _milliSecond = milliSecond
     if (milliSecond < 0L) _milliSecond *= -1
-    val h = _milliSecond / (60 * 60 * 1000)
+    val h = (_milliSecond / (60 * 60 * 1000)).toInt()
     _milliSecond %= (60 * 60 * 1000)
-    val m = _milliSecond / (60 * 1000)
+    val m = (_milliSecond / (60 * 1000)).toInt()
     _milliSecond %= (60 * 1000)
-    val s = _milliSecond / 1000
+    val s = (_milliSecond / 1000).toInt()
+
     return if (milliSecond < 0L) {
-        "-$h:$m:$s"
+        "-${String.format("%02d:%02d:%02d",h,m,s)}"
     } else {
-        "$h:$m:$s"
+        String.format("%02d:%02d:%02d",h,m,s)
     }
 }
 
@@ -64,3 +64,5 @@ fun View.clickWithDebounce(debounceTime: Long = 600L, action: () -> Unit) {
         }
     })
 }
+
+val serialJobManager = JobManagerImpl(SupervisorJob() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())

@@ -25,7 +25,7 @@ class TimerManager {
             val timersInStorage = service.getAllTimersData()
             timerDataList.addAll(timersInStorage)
             timersInStorage.forEach {
-                val timer = TimerImpl(it)
+                val timer = TimerImpl(it, service)
                 map[it.createTime] = timer
             }
         }
@@ -39,7 +39,8 @@ class TimerManager {
     suspend fun addTimerData(timerData: TimerData) = withContext(io()) {
         initJob.join()
         timerDataList.add(timerData)
-        val timer = TimerImpl(timerData)
+        service.insertTimerData(timerData)
+        val timer = TimerImpl(timerData, service)
         map[timerData.createTime] = timer
     }
 
@@ -47,11 +48,12 @@ class TimerManager {
         initJob.join()
         map.remove(timerData.createTime)
         timerDataList.remove(timerData)
+        service.deleteTimerData(timerData)
     }
 
-    suspend fun getTimer(createTime: Long): Timer? {
+    suspend fun getTimer(createTime: Long): Timer {
         initJob.join()
-        return map[createTime]
+        return map[createTime] ?: throw Exception("Plz call add timer before getting it")
     }
 
     suspend fun getTimerData(createTime: Long): TimerData? {

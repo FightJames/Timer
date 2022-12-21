@@ -8,7 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class DBService @Inject constructor(val dbManager: DBManager) {
 
-    suspend fun saveTimerData(timerData: TimerData) = dbManager.getTimerDAO().insert(timerData)
+    suspend fun insertTimerData(timerData: TimerData) = dbManager.getTimerDAO().insert(timerData)
 
     suspend fun updateTimerData(timerData: TimerData) = dbManager.getTimerDAO().updateTimerData(timerData)
 
