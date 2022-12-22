@@ -3,4 +3,7 @@
     <string name="settings">Settings</string>
     <string name="time"> %sh %sm %ss</string>
     <string name="timer">timer</string>
+    <string name="channel_name">timer</string>
+    <string name="channel_description">timer</string>
+
 </resources>

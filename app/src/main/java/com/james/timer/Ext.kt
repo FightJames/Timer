@@ -66,3 +66,5 @@ fun View.clickWithDebounce(debounceTime: Long = 600L, action: () -> Unit) {
 }
 
 val serialJobManager = JobManagerImpl(SupervisorJob() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+
+val NOTIFICATION_CHANNEL_ID = "Timer"

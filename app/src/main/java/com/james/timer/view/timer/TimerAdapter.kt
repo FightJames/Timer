@@ -15,6 +15,7 @@ class TimerAdapter(
     lateinit  var viewLifeCycleScope: CoroutineScope
     fun updateData(list: List<TimerData>) {
         this.list = list
+        //todo calculate move position each item
         notifyDataSetChanged()
     }
 
