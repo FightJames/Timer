@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import android.widget.RemoteViews
@@ -20,7 +21,8 @@ object PushNotificationManager {
     fun createMutipleTimerNotification(
         context: Context,
         view: RemoteViews,
-        isUserCanCancel: Boolean
+        isUserCanCancel: Boolean,
+        intent: PendingIntent? = null
     ): Notification {
         var builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_hourglass_bottom_24)
@@ -33,6 +35,7 @@ object PushNotificationManager {
             .setOngoing(!isUserCanCancel)
             .setVibrate(LongArray(1).apply { this[0] = -1L })
             .setOnlyAlertOnce(true)
+        intent?.let { builder.setContentIntent(intent) }
         createNotificationChannel(context)
         val notification = builder.build()
         return notification

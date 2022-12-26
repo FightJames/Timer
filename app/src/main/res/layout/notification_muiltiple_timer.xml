@@ -20,6 +20,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginBottom="2dp"
         android:layout_toEndOf="@id/notificationTimerIcon"
+        android:textColor="@color/notification_text"
         tools:text="count down" />
 
     <TextView
@@ -30,5 +31,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@id/notificationTimerIcon"
+        android:textColor="@color/notification_text"
         tools:text="Timers" />
 </RelativeLayout>

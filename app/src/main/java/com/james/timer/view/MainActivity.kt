@@ -1,5 +1,6 @@
 package com.james.timer.view
 
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -21,6 +22,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolBar)
         supportActionBar?.title = ""
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

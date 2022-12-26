@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import com.james.timer.utils.jobManager
+import kotlinx.coroutines.Dispatchers
 
 @SuppressLint("StaticFieldLeak")
 object ApplicationLifecycleManager : Application.ActivityLifecycleCallbacks {
@@ -40,9 +42,11 @@ object ApplicationLifecycleManager : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(p0: Activity) {
         count--
-        if (count == 0) {
-            callbacks.forEach {
-                it.onApplicationStop(context)
+        jobManager.launchSafely(context = Dispatchers.Main) {
+            if (count == 0) {
+                callbacks.forEach {
+                    it.onApplicationStop(context)
+                }
             }
         }
     }

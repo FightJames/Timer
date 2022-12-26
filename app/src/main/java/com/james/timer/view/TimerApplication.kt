@@ -27,12 +27,13 @@ class TimerApplication : Application() {
         this.registerActivityLifecycleCallbacks(ApplicationLifecycleManager)
         ApplicationLifecycleManager.registerApplicationLifecycleCallback(object : ApplicationLifecycleListener {
             override fun onApplicationStart(context: Context) {
+                val intent = Intent(context, TimerService::class.java)
+                applicationContext.stopService(intent)
             }
 
             override fun onApplicationStop(context: Context) {
                 jobManager.launchSafely {
                     val runningTimers = getTimerRepository(this@TimerApplication).getAllTimerData().sortedWith(comparator).filter { it.state == TimerState.RUNNING  }
-                    Timber.d("james_runningTimers $runningTimers")
                     if (runningTimers.isEmpty()) return@launchSafely
                     val intent = Intent(context, TimerService::class.java)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

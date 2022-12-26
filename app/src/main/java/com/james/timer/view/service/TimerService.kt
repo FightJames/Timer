@@ -43,25 +43,26 @@ class TimerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-//        val pendingIntent: PendingIntent =
-//            Intent(this, MainActivity::class.java).let { notificationIntent ->
-//                PendingIntent.getActivity(this, 0, notificationIntent,
-//                    PendingIntent.FLAG_IMMUTABLE)
-//            }
-        Timber.d("James createNotification")
+        val pendingIntent: PendingIntent =
+            Intent(this, MainActivity::class.java).let { notificationIntent ->
+                PendingIntent.getActivity(
+                    this, 0, notificationIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            }
         view =
             RemoteViews(this.packageName, R.layout.notification_muiltiple_timer)
         val notification = PushNotificationManager.createMutipleTimerNotification(
             this,
             view,
-            false
+            false,
+            pendingIntent
         )
         this.notification = notification
     }
 
     @SuppressLint("RemoteViewLayout")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.d("James onStartCommand")
         startForeground(ONGOING_NOTIFICATION_ID, notification)
         initUI()
         return super.onStartCommand(intent, flags, startId)
