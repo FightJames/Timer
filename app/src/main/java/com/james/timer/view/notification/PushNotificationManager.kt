@@ -9,46 +9,39 @@ import android.content.Context
 import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import com.james.timer.R
-import kotlin.random.Random
+
 
 @SuppressLint("RemoteViewLayout")
 object PushNotificationManager {
-    private val set = HashSet<Int>()
-
-    fun getCurrentNotificationCount(context: Context) = set.size
 
     fun createMutipleTimerNotification(
         context: Context,
+        view: RemoteViews,
         isUserCanCancel: Boolean
-    ): Pair<Int, Notification> {
-        val notificationLayout =
-            RemoteViews(context.packageName, R.layout.notification_muiltiple_timer)
+    ): Notification {
         var builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_hourglass_bottom_24)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setCustomContentView(notificationLayout)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setCustomContentView(view)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setShowWhen(false)
+            .setWhen(0L)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setOngoing(!isUserCanCancel)
+            .setVibrate(LongArray(1).apply { this[0] = -1L })
+            .setOnlyAlertOnce(true)
         createNotificationChannel(context)
-        var id = Random.nextInt()
-        while (set.contains(id)) {
-            id = Random.nextInt()
-        }
         val notification = builder.build()
-        return Pair(id, notification)
+        return notification
     }
 
-    fun cancelNotification(context: Context, id: Int) {
-        if (!set.contains(id)) return
-        NotificationManagerCompat.from(context).cancel(id)
-        set.remove(id)
-    }
+    fun notifyNotification(context: Context, id: Int, notification: Notification) {
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    fun cancelAllNotification(context: Context) {
-        NotificationManagerCompat.from(context).cancelAll()
-        set.clear()
+        manager.notify(id, notification)
     }
 
     @SuppressLint("ServiceCast")
@@ -58,10 +51,12 @@ object PushNotificationManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.channel_name)
             val descriptionText = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
+            channel.vibrationPattern = null
+            channel.enableVibration(false)
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
