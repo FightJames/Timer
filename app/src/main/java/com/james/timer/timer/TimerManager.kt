@@ -33,7 +33,7 @@ class TimerManager {
 
     suspend fun getTimerDataList(): List<TimerData> {
         initJob.join()
-        return timerDataList.toList()
+        return map.values.map { it.timerData }.toList()
     }
 
     suspend fun addTimerData(timerData: TimerData) = withContext(io()) {

@@ -49,7 +49,9 @@ class TimerFragment : Fragment() {
             LinearLayoutManager(this.requireContext())
         timerViewBinding.timerRecyclerView.adapter = adapter
         timerViewModel.timerDataListLiveData.observe(viewLifecycleOwner) {
-            adapter.updateData(it)
+            adapter.updateData(it) {
+                timerViewBinding.timerRecyclerView.scrollToPosition(0)
+            }
         }
     }
 }

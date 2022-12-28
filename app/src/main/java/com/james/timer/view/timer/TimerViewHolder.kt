@@ -10,7 +10,6 @@ import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
 import com.james.timer.utils.rethrowOnCancellation
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import milliSecondToTimeString
 import timber.log.Timber
 
@@ -20,7 +19,8 @@ class TimerViewHolder(view: View) : ViewHolder(view) {
     fun onBind(
         timerData: TimerData,
         viewModel: TimerViewModel,
-        viewLifeCycleOwner: CoroutineScope
+        viewLifeCycleOwner: CoroutineScope,
+        clickCallback: (Int) -> Unit
     ) {
         val timerStr = itemView.context.resources.getString(R.string.timer)
         itemView.findViewById<TextView>(R.id.timerTitleText).text = "${milliSecondToTimeString(timerData.countDownTime)} $timerStr"
@@ -31,6 +31,7 @@ class TimerViewHolder(view: View) : ViewHolder(view) {
             View.VISIBLE
         }
         resetBtn.clickWithDebounce {
+            clickCallback(adapterPosition)
             viewModel.stop(timerData.createTime)
         }
         val startOrStopBtn = itemView.findViewById<ImageView>(R.id.startOrStopBtn)
@@ -42,6 +43,7 @@ class TimerViewHolder(view: View) : ViewHolder(view) {
             }
         )
         startOrStopBtn.clickWithDebounce {
+            clickCallback(adapterPosition)
             if (timerData.state == TimerState.RUNNING) {
                 viewModel.pause(timerData.createTime)
             } else {
@@ -50,6 +52,7 @@ class TimerViewHolder(view: View) : ViewHolder(view) {
         }
 
         itemView.findViewById<ImageView>(R.id.closeBtn).clickWithDebounce {
+            clickCallback(adapterPosition)
             viewModel.removeTimer(timerData)
         }
 

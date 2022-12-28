@@ -6,26 +6,64 @@ import androidx.recyclerview.widget.RecyclerView
 import com.james.timer.R
 import com.james.timer.model.TimerData
 import kotlinx.coroutines.CoroutineScope
+import timber.log.Timber
 
 class TimerAdapter(
-    private var list: List<TimerData>,
+    var list: List<TimerData>,
     private val viewModel: TimerViewModel,
 ) : RecyclerView.Adapter<TimerViewHolder>() {
 
-    lateinit  var viewLifeCycleScope: CoroutineScope
-    fun updateData(list: List<TimerData>) {
-        this.list = list
-        //todo calculate move position each item
-        notifyDataSetChanged()
+    private var modifyPostion = -1
+    lateinit var viewLifeCycleScope: CoroutineScope
+    fun updateData(list: List<TimerData>, scrollToTop: () -> Unit) {
+        if (modifyPostion == -1) {
+            this.list = list
+            notifyDataSetChanged()
+        } else {
+            dataChange(list, scrollToTop)
+        }
     }
 
+    private fun dataChange(newList: List<TimerData>, scrollToTop: () -> Unit) {
+        val oldList = this.list
+        this.list = newList
+        when {
+            oldList.size == newList.size -> {
+                val (newIdx, timerData) = kotlin.run {
+                    newList.forEachIndexed { index, timerData ->
+                        if (timerData.createTime == oldList[modifyPostion].createTime) {
+                            return@run Pair(index, timerData)
+                        }
+                    }
+                    return@run Pair(-1, null)
+                }
+                if (newIdx == modifyPostion) {
+                    notifyItemChanged(modifyPostion)
+                } else {
+                    notifyItemMoved(modifyPostion, newIdx)
+                    val start = Math.min(modifyPostion, newIdx)
+                    val count = Math.max(modifyPostion, newIdx) - start + 1
+                    notifyItemRangeChanged(start, count)
+                    if (newIdx == 0) {
+                        scrollToTop()
+                    }
+                }
+            }
+            else -> notifyDataSetChanged()
+        }
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimerViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.timer_item, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.timer_item, parent, false)
         return TimerViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TimerViewHolder, position: Int) {
-        holder.onBind(list[position], viewModel, viewLifeCycleScope)
+        holder.onBind(list[position], viewModel, viewLifeCycleScope) {
+            modifyPostion = it
+        }
     }
 
 

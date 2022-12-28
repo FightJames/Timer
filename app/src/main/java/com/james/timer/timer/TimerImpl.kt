@@ -13,7 +13,7 @@ import serialJobManager
 class TimerImpl : Timer {
 
     override val timerData: TimerData
-        get() = _timerData
+        get() = _timerData.copy()
 
     private val _timerData: TimerData
     private val _currentTimeFlow: MutableStateFlow<Long>
