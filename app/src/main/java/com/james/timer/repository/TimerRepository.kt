@@ -1,14 +1,10 @@
 package com.james.timer.repository
 
 import com.james.timer.model.TimerData
-import com.james.timer.service.DBService
 import com.james.timer.timer.TimerManager
-import dagger.hilt.android.scopes.ServiceScoped
-import dagger.hilt.android.scopes.ViewModelScoped
 import io
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
-import serialJobManager
 import javax.inject.Inject
 
 class TimerRepository @Inject constructor(
