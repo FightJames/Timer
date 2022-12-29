@@ -11,13 +11,11 @@ import com.james.timer.model.TimerState
 import com.james.timer.utils.jobManager
 import com.james.timer.view.service.TimerService
 import comparator
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 @HiltAndroidApp
 class TimerApplication : Application() {
-
 
     override fun onCreate() {
         super.onCreate()
@@ -39,7 +37,7 @@ class TimerApplication : Application() {
                     val runningTimers = getTimerRepository(this@TimerApplication).getAllTimerData().sortedWith(comparator).filter { it.state == TimerState.RUNNING  }
                     if (runningTimers.isEmpty()) return@launchSafely
                     val wakeLockManager = getWakeLockManager(this@TimerApplication)
-                    wakeLockManager.lockCPU()
+                    wakeLockManager.lockCPU(runningTimers.last().currentCountDown)
                     val intent = Intent(context, TimerService::class.java)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         applicationContext.startForegroundService(intent)

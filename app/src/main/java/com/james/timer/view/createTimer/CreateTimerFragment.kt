@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import clickWithDebounce
 import com.james.timer.R
 import com.james.timer.databinding.FragmentCreateTimerBinding
-import com.james.timer.view.utils.StringFormatter
+import com.james.timer.utils.StringFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

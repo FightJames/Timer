@@ -1,7 +1,7 @@
 package com.james.timer.hilt
 
 import android.content.Context
-import com.james.timer.view.utils.WakeLockManager
+import com.james.timer.utils.WakeLockManager
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors

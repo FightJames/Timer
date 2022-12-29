@@ -5,6 +5,7 @@ import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
 import com.james.timer.service.DBService
 import com.james.timer.utils.JobManagerImpl
+import com.james.timer.utils.SoundManager
 import io
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -22,8 +23,10 @@ class TimerImpl : Timer {
     private var timerJob: Job = CompletableDeferred(Unit)
     private var timerState: TimerState
     private val service: DBService
+    private val soundManager: SoundManager
 
-    constructor(timerData: TimerData, service: DBService) {
+    constructor(timerData: TimerData, service: DBService, soundManager: SoundManager) {
+        this.soundManager = soundManager
         this._timerData = timerData
         this.service = service
         _currentTimeFlow = MutableStateFlow(timerData.currentCountDown)
@@ -61,6 +64,7 @@ class TimerImpl : Timer {
         coroutineScope.cancelChildren()
         timerState = TimerState.PAUSE
         _timerData.state = TimerState.PAUSE
+        soundManager.stopRinging(_timerData.createTime.toString())
         syncTimerData()
     }
 
@@ -73,6 +77,7 @@ class TimerImpl : Timer {
         _timerData.currentCountDown = _timerData.countDownTime
         timerState = TimerState.STOP
         _timerData.state = TimerState.STOP
+        soundManager.stopRinging(_timerData.createTime.toString())
         syncTimerData()
     }
 
@@ -86,6 +91,7 @@ class TimerImpl : Timer {
                 currentTime -= 1000
                 _timerData.currentCountDown = currentTime
                 _currentTimeFlow.compareAndSet(_currentTimeFlow.value, currentTime)
+                if (currentTime <= 0) soundManager.startRinging(_timerData.createTime.toString())
                 syncTimerData()
             }
         }

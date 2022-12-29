@@ -27,12 +27,18 @@ fun milliSecondToTimeString(milliSecond: Long): String {
     val m = (_milliSecond / (60 * 1000)).toInt()
     _milliSecond %= (60 * 1000)
     val s = (_milliSecond / 1000).toInt()
-
-    return if (milliSecond < 0L) {
-        "-${String.format("%02d:%02d:%02d",h,m,s)}"
-    } else {
-        String.format("%02d:%02d:%02d",h,m,s)
+    val ans = StringBuilder()
+    if (milliSecond < 0L) {
+        ans.append("-")
     }
+    if (h > 0) {
+        ans.append(String.format("%02d:", h))
+    }
+    if (m > 0 || h > 0) {
+        ans.append(String.format("%02d:", m))
+    }
+    ans.append(String.format("%02d", s))
+    return ans.toString()
 }
 
 fun CoroutineScope.cancelChildren() {
@@ -65,6 +71,7 @@ fun View.clickWithDebounce(debounceTime: Long = 600L, action: () -> Unit) {
     })
 }
 
-val serialJobManager = JobManagerImpl(SupervisorJob() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())
+val serialJobManager =
+    JobManagerImpl(SupervisorJob() + Executors.newSingleThreadExecutor().asCoroutineDispatcher())
 
 val NOTIFICATION_CHANNEL_ID = "Timer"

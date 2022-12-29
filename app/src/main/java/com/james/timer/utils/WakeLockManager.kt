@@ -1,4 +1,4 @@
-package com.james.timer.view.utils
+package com.james.timer.utils
 
 import android.content.Context
 import android.os.PowerManager
@@ -14,9 +14,9 @@ class WakeLockManager @Inject constructor(@ApplicationContext context: Context) 
             newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, LOCK_TAG)
         }
 
-    fun lockCPU() {
+    fun lockCPU(milliseconds: Long) {
         if (!wakeLock.isHeld) {
-            wakeLock.acquire()
+            wakeLock.acquire(milliseconds)
         }
     }
 

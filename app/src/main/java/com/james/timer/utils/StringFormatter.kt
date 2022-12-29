@@ -1,4 +1,4 @@
-package com.james.timer.view.utils
+package com.james.timer.utils
 
 import android.content.Context
 import com.james.timer.R
