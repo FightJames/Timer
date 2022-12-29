@@ -59,6 +59,11 @@ class TimerService : Service() {
             pendingIntent
         )
         this.notification = notification
+        PushNotificationManager.notifyNotification(
+            this@TimerService,
+            ONGOING_NOTIFICATION_ID,
+            notification
+        )
     }
 
     @SuppressLint("RemoteViewLayout")
@@ -72,15 +77,15 @@ class TimerService : Service() {
         coroutineScrope.launchSafely(context = io()) {
             val currentTimers = timerRepository.getAllTimerData().sortedWith(comparator)
                 .filter { it.state == TimerState.RUNNING }
-            view.setTextViewText(
-                R.id.notificationTimerCountText,
-                "${currentTimers.size} timers"
-            )
-            view.setTextViewText(
-                R.id.notificationTimerText,
-                milliSecondToTimeString(timerRepository.getTimerCurrentTime(currentTimers[0].createTime))
-            )
             withContext(Dispatchers.Main) {
+                view.setTextViewText(
+                    R.id.notificationTimerCountText,
+                    "${currentTimers.size} timers"
+                )
+                view.setTextViewText(
+                    R.id.notificationTimerText,
+                    milliSecondToTimeString(timerRepository.getTimerCurrentTime(currentTimers[0].createTime))
+                )
                 timerRepository.getTimerCurrentTimeFlow(currentTimers[0].createTime)
                     .collect {
                         Timber.d("Timer count down ${milliSecondToTimeString(it)}")
