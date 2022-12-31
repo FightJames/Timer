@@ -16,7 +16,6 @@ class TimerManager {
     private val service: DBService
     private var initJob: Job = CompletableDeferred(Unit)
 
-    private val timerDataList: MutableList<TimerData> = mutableListOf()
     private val map: MutableMap<Long, Timer> = HashMap()
     private val soundManager: SoundManager
 
@@ -26,7 +25,6 @@ class TimerManager {
         this.service = service
         initJob = jobManager.launchSafely(context = io()) {
             val timersInStorage = service.getAllTimersData()
-            timerDataList.addAll(timersInStorage)
             timersInStorage.forEach {
                 val timer = TimerImpl(it, service, soundManager)
                 map[it.createTime] = timer
@@ -41,7 +39,6 @@ class TimerManager {
 
     suspend fun addTimerData(timerData: TimerData) = withContext(io()) {
         initJob.join()
-        timerDataList.add(timerData)
         service.insertTimerData(timerData)
         val timer = TimerImpl(timerData, service, soundManager)
         map[timerData.createTime] = timer
@@ -51,7 +48,6 @@ class TimerManager {
         initJob.join()
         map[timerData.createTime]?.stop()
         map.remove(timerData.createTime)
-        timerDataList.remove(timerData)
         service.deleteTimerData(timerData)
     }
 

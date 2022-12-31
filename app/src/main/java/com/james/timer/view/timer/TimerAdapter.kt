@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.james.timer.R
 import com.james.timer.model.TimerData
 import kotlinx.coroutines.CoroutineScope
-import timber.log.Timber
 
 class TimerAdapter(
     var list: List<TimerData>,
