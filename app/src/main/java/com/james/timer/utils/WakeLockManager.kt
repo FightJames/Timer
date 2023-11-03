@@ -15,14 +15,14 @@ class WakeLockManager @Inject constructor(@ApplicationContext context: Context) 
         }
 
     fun lockCPU(milliseconds: Long) {
-        if (!wakeLock.isHeld) {
-            wakeLock.acquire(milliseconds)
-        }
+//        if (!wakeLock.isHeld) {
+//            wakeLock.acquire(milliseconds)
+//        }
     }
 
     fun releaseCPU() {
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-        }
+//        if (wakeLock.isHeld) {
+//            wakeLock.release()
+//        }
     }
 }

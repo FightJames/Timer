@@ -2,6 +2,7 @@ package com.james.timer.model
 
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
+import androidx.room.ColumnInfo.TEXT
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.james.timer.db.TimerDB
@@ -10,13 +11,13 @@ import com.james.timer.db.TimerDB
 @Entity(tableName = TimerDB.TIMER_TABLE_NAME)
 data class TimerData (
     @PrimaryKey
-    @ColumnInfo(name = "create_time", typeAffinity = 2)
+    @ColumnInfo(name = "create_time", typeAffinity = TEXT)
     val createTime: Long,
 
-    @ColumnInfo(name = "count_down_time", typeAffinity = 2)
+    @ColumnInfo(name = "count_down_time", typeAffinity = TEXT)
     val countDownTime: Long,
 
-    @ColumnInfo(name = "current_count_down", typeAffinity = 2)
+    @ColumnInfo(name = "current_count_down", typeAffinity = TEXT)
     var currentCountDown: Long,
 
     @ColumnInfo(name = "state")

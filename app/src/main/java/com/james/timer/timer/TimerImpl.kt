@@ -1,5 +1,7 @@
 package com.james.timer.timer
 
+import android.os.CountDownTimer
+import android.os.SystemClock
 import cancelChildren
 import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
@@ -10,6 +12,7 @@ import io
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import serialJobManager
+import timber.log.Timber
 
 class TimerImpl : Timer {
 
@@ -19,8 +22,6 @@ class TimerImpl : Timer {
     private val _timerData: TimerData
     private val _currentTimeFlow: MutableStateFlow<Long>
     private var currentTime: Long
-    private val coroutineScope = JobManagerImpl(SupervisorJob() + io())
-    private var timerJob: Job = CompletableDeferred(Unit)
     private var timerState: TimerState
     private val dbRepository: DBRepository
     private val soundManager: SoundManager
@@ -40,28 +41,24 @@ class TimerImpl : Timer {
     override val currentTimeFlow: StateFlow<Long>
         get() = _currentTimeFlow
 
-    @Volatile
-    private var flag = false
-    private val delayMiliSecond = 1000L
-
     override fun start() {
         timerState = TimerState.RUNNING
         _timerData.state = TimerState.RUNNING
         syncTimerData()
-        startInternal()
+        startInternalWithCountDownTimer()
     }
 
     override fun resume() {
         timerState = TimerState.RUNNING
         _timerData.state = TimerState.RUNNING
         syncTimerData()
-        startInternal()
+        startInternalWithCountDownTimer()
+
     }
 
     @Synchronized
     override fun pause() {
-        flag = false
-        coroutineScope.cancelChildren()
+        stopInternalCountDownTimer()
         timerState = TimerState.PAUSE
         _timerData.state = TimerState.PAUSE
         soundManager.stopRinging(_timerData.createTime.toString())
@@ -70,8 +67,7 @@ class TimerImpl : Timer {
 
     @Synchronized
     override fun stop() {
-        flag = false
-        coroutineScope.cancelChildren()
+        stopInternalCountDownTimer()
         _currentTimeFlow.compareAndSet(_currentTimeFlow.value, _timerData.countDownTime)
         currentTime = _timerData.countDownTime
         _timerData.currentCountDown = _timerData.countDownTime
@@ -81,20 +77,33 @@ class TimerImpl : Timer {
         syncTimerData()
     }
 
+    private var countDownTimer: CountDownTimer? = null
     @Synchronized
-    private fun startInternal() {
-        if (timerJob.isActive) return
-        timerJob = coroutineScope.launchSafely {
-            flag = true
-            while (flag) {
-                delay(delayMiliSecond)
-                currentTime -= 1000
+    private fun startInternalWithCountDownTimer() {
+        if (countDownTimer != null) return
+        countDownTimer = object : CountDownTimer(currentTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                currentTime = millisUntilFinished
                 _timerData.currentCountDown = currentTime
-                _currentTimeFlow.compareAndSet(_currentTimeFlow.value, currentTime)
-                if (currentTime <= 0) soundManager.startRinging(_timerData.createTime.toString())
+                _currentTimeFlow.update { currentTime }
+                syncTimerData()
+            }
+
+            override fun onFinish() {
+                currentTime = 0
+                _timerData.currentCountDown = currentTime
+                soundManager.startRinging(_timerData.createTime.toString())
+                _currentTimeFlow.update { currentTime }
                 syncTimerData()
             }
         }
+        countDownTimer?.start()
+    }
+
+    @Synchronized
+    private fun stopInternalCountDownTimer() {
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
 
     private fun syncTimerData() {
