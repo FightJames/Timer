@@ -5,6 +5,8 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import com.james.timer.R
@@ -68,7 +70,12 @@ class TimerService : Service() {
 
     @SuppressLint("RemoteViewLayout")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(ONGOING_NOTIFICATION_ID, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Timber.d("JobService onStartCommand")
+            startForeground(ONGOING_NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+        } else {
+            startForeground(ONGOING_NOTIFICATION_ID, notification)
+        }
         initUI()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -88,7 +95,7 @@ class TimerService : Service() {
                 )
                 timerRepository.getTimerCurrentTimeFlow(currentTimers[0].createTime)
                     .collect {
-                        Timber.d("Timer count down ${milliSecondToTimeString(it)}")
+//                        Timber.d("Timer count down ${milliSecondToTimeString(it)}")
                         view.setTextViewText(
                             R.id.notificationTimerText,
                             milliSecondToTimeString(it)

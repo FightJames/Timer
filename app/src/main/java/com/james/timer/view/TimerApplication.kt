@@ -3,7 +3,9 @@ package com.james.timer.view
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.os.Build
+import android.util.Log
 import com.james.timer.BuildConfig
 import com.james.timer.hilt.getTimerRepository
 import com.james.timer.hilt.getWakeLockManager

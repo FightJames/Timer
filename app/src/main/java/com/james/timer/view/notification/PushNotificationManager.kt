@@ -30,6 +30,7 @@ object PushNotificationManager {
             .setCustomContentView(view)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setShowWhen(false)
+            .setAutoCancel(false)
             .setWhen(0L)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .setOngoing(!isUserCanCancel)
@@ -43,7 +44,6 @@ object PushNotificationManager {
 
     fun notifyNotification(context: Context, id: Int, notification: Notification) {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         manager.notify(id, notification)
     }
 
@@ -54,7 +54,7 @@ object PushNotificationManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = context.getString(R.string.channel_name)
             val descriptionText = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_LOW
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
