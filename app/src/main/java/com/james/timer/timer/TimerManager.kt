@@ -1,7 +1,7 @@
 package com.james.timer.timer
 
 import com.james.timer.model.TimerData
-import com.james.timer.service.DBService
+import com.james.timer.repository.DBRepository
 import com.james.timer.utils.SoundManager
 import com.james.timer.utils.jobManager
 import io
@@ -13,20 +13,20 @@ import javax.inject.Singleton
 
 @Singleton
 class TimerManager {
-    private val service: DBService
+    private val dbRepository: DBRepository
     private var initJob: Job = CompletableDeferred(Unit)
 
     private val map: MutableMap<Long, Timer> = HashMap()
     private val soundManager: SoundManager
 
     @Inject
-    constructor(service: DBService, soundManager: SoundManager) {
+    constructor(dbRepository: DBRepository, soundManager: SoundManager) {
         this.soundManager = soundManager
-        this.service = service
+        this.dbRepository = dbRepository
         initJob = jobManager.launchSafely(context = io()) {
-            val timersInStorage = service.getAllTimersData()
+            val timersInStorage = dbRepository.getAllTimersData()
             timersInStorage.forEach {
-                val timer = TimerImpl(it, service, soundManager)
+                val timer = TimerImpl(it, dbRepository, soundManager)
                 map[it.createTime] = timer
             }
         }
@@ -39,8 +39,8 @@ class TimerManager {
 
     suspend fun addTimerData(timerData: TimerData) = withContext(io()) {
         initJob.join()
-        service.insertTimerData(timerData)
-        val timer = TimerImpl(timerData, service, soundManager)
+        dbRepository.insertTimerData(timerData)
+        val timer = TimerImpl(timerData, dbRepository, soundManager)
         map[timerData.createTime] = timer
     }
 
@@ -48,7 +48,7 @@ class TimerManager {
         initJob.join()
         map[timerData.createTime]?.stop()
         map.remove(timerData.createTime)
-        service.deleteTimerData(timerData)
+        dbRepository.deleteTimerData(timerData)
     }
 
     suspend fun getTimer(createTime: Long): Timer {

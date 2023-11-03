@@ -24,7 +24,7 @@ class CreateTimerFragment : Fragment() {
     lateinit var binding: FragmentCreateTimerBinding
     val createTimerViewModel: CreateTimerViewModel by viewModels()
 
-    fun createKeyboardNumberItem(
+    private fun createKeyboardNumberItem(
         inflater: LayoutInflater,
         row: Int,
         column: Int,

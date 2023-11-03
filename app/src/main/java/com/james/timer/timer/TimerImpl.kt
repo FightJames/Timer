@@ -3,7 +3,7 @@ package com.james.timer.timer
 import cancelChildren
 import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
-import com.james.timer.service.DBService
+import com.james.timer.repository.DBRepository
 import com.james.timer.utils.JobManagerImpl
 import com.james.timer.utils.SoundManager
 import io
@@ -22,13 +22,13 @@ class TimerImpl : Timer {
     private val coroutineScope = JobManagerImpl(SupervisorJob() + io())
     private var timerJob: Job = CompletableDeferred(Unit)
     private var timerState: TimerState
-    private val service: DBService
+    private val dbRepository: DBRepository
     private val soundManager: SoundManager
 
-    constructor(timerData: TimerData, service: DBService, soundManager: SoundManager) {
+    constructor(timerData: TimerData, dbRepository: DBRepository, soundManager: SoundManager) {
         this.soundManager = soundManager
         this._timerData = timerData
-        this.service = service
+        this.dbRepository = dbRepository
         _currentTimeFlow = MutableStateFlow(timerData.currentCountDown)
         currentTime = timerData.currentCountDown
         timerState = timerData.state
@@ -99,7 +99,7 @@ class TimerImpl : Timer {
 
     private fun syncTimerData() {
         serialJobManager.launchSafely {
-            service.updateTimerData(_timerData)
+            dbRepository.updateTimerData(_timerData)
         }
     }
 }
