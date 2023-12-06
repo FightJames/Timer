@@ -1,18 +1,12 @@
 package com.james.timer.timer
 
 import android.os.CountDownTimer
-import android.os.SystemClock
-import cancelChildren
 import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
 import com.james.timer.repository.DBRepository
-import com.james.timer.utils.JobManagerImpl
 import com.james.timer.utils.SoundManager
-import io
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import serialJobManager
-import timber.log.Timber
 
 class TimerImpl : Timer {
 

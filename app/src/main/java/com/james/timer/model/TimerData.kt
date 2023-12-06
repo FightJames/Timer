@@ -2,7 +2,7 @@ package com.james.timer.model
 
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
-import androidx.room.ColumnInfo.TEXT
+import androidx.room.ColumnInfo.Companion.TEXT
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.james.timer.db.TimerDB
