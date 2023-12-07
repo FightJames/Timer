@@ -11,6 +11,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,9 +27,22 @@ class TimerViewModel @Inject constructor() : ViewModel() {
     val timerDataListLiveData: LiveData<List<TimerData>>
         get() = _timerDataListLiveData
 
+    private var timerUIState = MutableStateFlow<TimerUIState>(TimerUIState.Idle)
+    val timerUIStateFlow: StateFlow<TimerUIState>
+        get() = timerUIState
+
+    sealed class TimerUIState {
+        object Idle : TimerUIState()
+        data class UpdateTimerList(val list: List<TimerData>): TimerUIState()
+    }
+
     fun fetchTimerData() {
         viewModelScope.launch {
-            _timerDataListLiveData.value = timerRepository.getAllTimerData().sortedWith(comparator)
+            val data = timerRepository.getAllTimerData().sortedWith(comparator)
+            _timerDataListLiveData.value = data
+            timerUIState.update {
+                TimerUIState.UpdateTimerList(data)
+            }
         }
     }
 
