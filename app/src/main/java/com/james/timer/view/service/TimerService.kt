@@ -9,6 +9,7 @@ import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
 import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
+import androidx.core.app.ServiceCompat
 import com.james.timer.R
 import com.james.timer.model.TimerState
 import com.james.timer.repository.TimerRepository
