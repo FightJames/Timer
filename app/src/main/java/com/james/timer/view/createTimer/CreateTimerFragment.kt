@@ -9,12 +9,15 @@ import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.compose.material3.Surface
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import clickWithDebounce
 import com.james.timer.R
 import com.james.timer.databinding.FragmentCreateTimerBinding
+import com.james.timer.ui.theme.TimerUITheme
 import com.james.timer.utils.StringFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,16 +44,17 @@ class CreateTimerFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        setUpView()
-        createTimerViewModel.currentTimerTimeLiveData.observe(this.viewLifecycleOwner) {
-            binding.timerText.text = StringFormatter.timerString(it, this.requireContext()).apply {
-                if (it.hours != CreateTimerViewModel.ZERO || it.minutes != CreateTimerViewModel.ZERO || it.seconds != CreateTimerViewModel.ZERO) {
-                    binding.startBtn.visibility = View.VISIBLE
-                } else {
-                    binding.startBtn.visibility = View.INVISIBLE
-                }
-            }
-        }
+        setUpComposeView()
+//        setUpView()
+//        createTimerViewModel.currentTimerTimeLiveData.observe(this.viewLifecycleOwner) {
+//            binding.timerText.text = StringFormatter.timerString(it, this.requireContext()).apply {
+//                if (it.hours != CreateTimerViewModel.ZERO || it.minutes != CreateTimerViewModel.ZERO || it.seconds != CreateTimerViewModel.ZERO) {
+//                    binding.startBtn.visibility = View.VISIBLE
+//                } else {
+//                    binding.startBtn.visibility = View.INVISIBLE
+//                }
+//            }
+//        }
     }
 
     override fun onCreateView(
@@ -59,7 +63,18 @@ class CreateTimerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View = FragmentCreateTimerBinding.inflate(inflater, container, false).let {
         binding = it
+        binding.createTimerComposeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         it.root
+    }
+
+    private fun setUpComposeView() {
+        binding.createTimerComposeView.setContent {
+            TimerUITheme {
+                Surface {
+                    createTimerView(viewModel = createTimerViewModel, this.findNavController())
+                }
+            }
+        }
     }
 
     private fun setUpView() {

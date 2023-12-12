@@ -9,6 +9,9 @@ import com.james.timer.model.TimerData
 import com.james.timer.model.TimerState
 import com.james.timer.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import milliSecondToTimeString
 import timber.log.Timber
@@ -27,6 +30,10 @@ class CreateTimerViewModel @Inject constructor() : ViewModel() {
     private val _currentTimerTimeLiveData: MutableLiveData<Time> =
         MutableLiveData(Time(ZERO, ZERO, ZERO))
 
+    private val _currentTimerTimeStateFlow = MutableStateFlow<Time>(Time(ZERO, ZERO, ZERO))
+    val currentTimerTimeStateFlow: StateFlow<Time>
+        get() = _currentTimerTimeStateFlow
+
     fun appendTime(number: String) {
         if ((number == "0" || number == ZERO) && curCreateTimeStr == "000000") return
         if (number.length > 2) return
@@ -34,21 +41,35 @@ class CreateTimerViewModel @Inject constructor() : ViewModel() {
         if (curCreateTimeStr[0] != '0') return
         curCreateTimeStr += number
         curCreateTimeStr = curCreateTimeStr.removeRange(0, number.length)
-        _currentTimerTimeLiveData.value = Time(
-            hours = curCreateTimeStr.substring(0, 2),
-            minutes = curCreateTimeStr.substring(2, 4),
-            seconds = curCreateTimeStr.substring(4, 6),
-        )
+        _currentTimerTimeStateFlow.update {
+            Time(
+                hours = curCreateTimeStr.substring(0, 2),
+                minutes = curCreateTimeStr.substring(2, 4),
+                seconds = curCreateTimeStr.substring(4, 6),
+            )
+        }
+//        _currentTimerTimeLiveData.value = Time(
+//            hours = curCreateTimeStr.substring(0, 2),
+//            minutes = curCreateTimeStr.substring(2, 4),
+//            seconds = curCreateTimeStr.substring(4, 6),
+//        )
     }
 
     fun deleteLastElementInCurrentCreateTime() {
         if (curCreateTimeStr == "000000") return
         curCreateTimeStr = "0" + curCreateTimeStr.substring(0, 5)
-        _currentTimerTimeLiveData.value = Time(
-            hours = curCreateTimeStr.substring(0, 2),
-            minutes = curCreateTimeStr.substring(2, 4),
-            seconds = curCreateTimeStr.substring(4, 6),
-        )
+//        _currentTimerTimeLiveData.value = Time(
+//            hours = curCreateTimeStr.substring(0, 2),
+//            minutes = curCreateTimeStr.substring(2, 4),
+//            seconds = curCreateTimeStr.substring(4, 6),
+//        )
+        _currentTimerTimeStateFlow.update {
+            Time(
+                hours = curCreateTimeStr.substring(0, 2),
+                minutes = curCreateTimeStr.substring(2, 4),
+                seconds = curCreateTimeStr.substring(4, 6),
+            )
+        }
     }
 
     suspend fun addAndStartTimer(time: Time) {
