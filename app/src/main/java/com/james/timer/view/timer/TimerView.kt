@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,14 +51,15 @@ import timber.log.Timber
 @Composable
 fun TimerView(state: TimerViewModel.TimerUIState) {
     TimerUITheme {
-        when (state) {
-            is TimerViewModel.TimerUIState.Idle -> {
-                //loading
-            }
+        Surface {
+            when (state) {
+                is TimerViewModel.TimerUIState.Idle -> {
+                    //loading
+                }
 
-            is TimerViewModel.TimerUIState.UpdateTimerList -> {
-                Log.d("james-test", "pass list to compose ${state.list}")
-                TimerListView(state.list)
+                is TimerViewModel.TimerUIState.UpdateTimerList -> {
+                    TimerListView(state.list)
+                }
             }
         }
     }

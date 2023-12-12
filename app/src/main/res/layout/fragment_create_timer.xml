@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".view.createTimer.CreateTimerFragment">
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/createTimerComposeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <GridLayout
         android:id="@+id/numberGridLayout"
         android:layout_width="wrap_content"
@@ -15,12 +20,12 @@
         android:layout_marginEnd="8dp"
         android:columnCount="3"
         android:rowCount="4"
+        android:visibility="gone"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/startBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerText">
-    </GridLayout>
+        app:layout_constraintTop_toBottomOf="@+id/timerText"></GridLayout>
 
     <TextView
         android:id="@+id/timerText"
@@ -29,8 +34,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="8dp"
-        android:textSize="50sp"
         android:gravity="center"
+        android:visibility="gone"
+        android:textSize="50sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -44,6 +50,7 @@
         android:background="@drawable/ic_baseline_circle_24"
         android:backgroundTint="@color/purple_200"
         android:padding="10dp"
+        android:visibility="gone"
         android:src="@drawable/ic_baseline_delete_outline_24"
         app:layout_constraintBottom_toBottomOf="@+id/startBtn"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +63,7 @@
         android:layout_marginBottom="20dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_baseline_play_circle_24"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
