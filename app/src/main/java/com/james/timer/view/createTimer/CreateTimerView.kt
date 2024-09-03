@@ -123,7 +123,6 @@ fun numberKeyboard(viewModel: CreateTimerViewModel = viewModel()) {
         content = {
             items(list) {
                 numberItem(number = it) {
-                    Log.d("James-test", "click $it")
                     viewModel.appendTime(it)
                 }
             }

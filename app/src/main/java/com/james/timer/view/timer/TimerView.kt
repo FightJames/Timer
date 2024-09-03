@@ -1,6 +1,11 @@
 package com.james.timer.view.timer
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -65,11 +71,15 @@ fun TimerView(state: TimerViewModel.TimerUIState) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimerListView(data: List<TimerData>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(data) { item ->
-            TimerItemView(item)
+        items(data, key = { it.createTime }) { item ->
+            TimerItemView(
+                item,
+                modifier = Modifier.animateItemPlacement(animationSpec = tween(durationMillis = 200))
+            )
         }
     }
 }
@@ -77,6 +87,7 @@ fun TimerListView(data: List<TimerData>) {
 @Composable
 fun TimerItemView(
     data: TimerData,
+    modifier: Modifier = Modifier,
     viewModel: TimerViewModel = viewModel()
 ) {
     var countDownTimer by remember { mutableStateOf<String>("") }
@@ -93,7 +104,7 @@ fun TimerItemView(
             Timber.e("Exception $t")
         }
     }
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
