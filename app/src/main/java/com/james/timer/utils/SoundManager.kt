@@ -6,7 +6,9 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.PowerManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,15 +16,15 @@ import javax.inject.Singleton
 class SoundManager @Inject constructor(@ApplicationContext private val context: Context) {
 
     private val mediaPlayer: MediaPlayer by lazy {
+        val ringtoneUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
         return@lazy MediaPlayer().let { mp ->
-            val ringtoneUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-            mp.setDataSource(context, ringtoneUri)
             val attributes = AudioAttributes.Builder()
                 .setLegacyStreamType(AudioManager.STREAM_ALARM)
                 .build()
+            mp.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK)
             mp.setAudioAttributes(attributes)
+            mp.setDataSource(context, ringtoneUri)
             mp.isLooping = true
-            mp.prepare()
             mp
         }
     }
@@ -34,8 +36,10 @@ class SoundManager @Inject constructor(@ApplicationContext private val context: 
             if (timers.isEmpty()) {
                 val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 am.mode = AudioManager.MODE_NORMAL
-                mediaPlayer.seekTo(0)
-                mediaPlayer.start()
+                if (!mediaPlayer.isPlaying()) {
+                    mediaPlayer.prepare()
+                    mediaPlayer.start()
+                }
             }
             timers.add(timerCreateTime)
         }
@@ -45,7 +49,7 @@ class SoundManager @Inject constructor(@ApplicationContext private val context: 
     fun stopRinging(timerCreateTime: String) {
         timers.remove(timerCreateTime)
         if (timers.size == 0) {
-            mediaPlayer.pause()
+            mediaPlayer.stop()
         }
     }
 }
