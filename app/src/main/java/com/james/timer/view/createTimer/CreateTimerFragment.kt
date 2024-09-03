@@ -71,7 +71,7 @@ class CreateTimerFragment : Fragment() {
         binding.createTimerComposeView.setContent {
             TimerUITheme {
                 Surface {
-                    createTimerView(viewModel = createTimerViewModel, this.findNavController())
+                    CreateTimerView(viewModel = createTimerViewModel, this.findNavController())
                 }
             }
         }
