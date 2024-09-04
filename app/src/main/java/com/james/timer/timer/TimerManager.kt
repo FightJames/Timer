@@ -12,17 +12,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TimerManager {
-    private val dbRepository: DBRepository
+class TimerManager @Inject constructor(
+    private val dbRepository: DBRepository,
+    private val soundManager: SoundManager
+) {
     private var initJob: Job = CompletableDeferred(Unit)
 
     private val map: MutableMap<Long, Timer> = HashMap()
-    private val soundManager: SoundManager
 
-    @Inject
-    constructor(dbRepository: DBRepository, soundManager: SoundManager) {
-        this.soundManager = soundManager
-        this.dbRepository = dbRepository
+    init {
         initJob = jobManager.launchSafely(context = io()) {
             val timersInStorage = dbRepository.getAllTimersData()
             timersInStorage.forEach {
